@@ -1,0 +1,456 @@
+---
+title: "Diary"
+author: "Divya Purohith"
+date: "November 16, 2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+I have chosen base R to learn..
+
+**Data Visualization**
+
+```{r}
+library(MASS)
+```
+
+Two types of data visualization:
+
+**Exploratory visualizations** help us understand the data. It keeps as much details as possible.
+**Explanatory visualizations** help us share our
+understanding with others. It highlights the key features you want to emphasize in the data.
+
+R supports both types of visualization.
+
+**There are 4 graphics systems in R**
+Base graphics: Easiest to learn and focus of this course
+Grid graphics: powerful set of modules for building other
+tools
+La!ice graphics: general purpose system based on grid
+graphics 
+ggplot2: Grammar of graphics
+
+```{r}
+str(whiteside)
+plot(whiteside)
+plot(whiteside$Temp, whiteside$Gas, xlab = "Outside temperature", ylab = "Heating gas consumption")
+```
+Example of plot:
+plot(data$cars,data$minds). It will take data$cars automatically as X and the other one as y. We can also add title with title("cars vs minds").
+
+For grid graphics we need to load the grid package.
+
+**There are different plors in R**
+1. Scatter plot
+2. Sunflower plot
+3. Boxplot (Used to know the range of numerical variables in the data. This is to see the distrubution, I am gonna use this for my drosophila egg laying data).
+4. Mosaic plot(Relationship between the variables)
+5. Pie charts are the poor choice to use.
+
+**Graphics**
+Graphics can be low level or high level
+we can even add colour and shapes to the points,lines and texts in our graphs. Shapes of the points can be specified either by the number or single alphabetic letter.
+
+
+**CHARACTERIZING A SINGLE  VARIABLE**
+histogram is the best way to look how the numeric variables are disturbuted over their range
+hist() is the function used. truehist() is the alternate form of hist.
+
+qqPlot()
+
+
+Visualization relations between two variables
+
+
+```{r}
+library(MASS) 
+plot(rad ~zn, data = Boston) #Gives scatterplot. 
+title("Scatter plot")
+```
+
+```{r}
+library(MASS)
+sunflowerplot(rad ~zn, data = Boston)
+title("Sunflower plot")
+``` 
+
+```{r}
+boxplot(crim ~ rad, #showing the distribution of numerical crim values over the different distinct rad values
+  data = Boston, 
+  varwidth = T,
+  log = "y", #logtransformed values for y
+  las = 1) #horizontal labels for both x and y
+```
+
+```{r}
+mosaicplot(carb ~ cyl, 
+  data = mtcars,
+  color = T) #color true will keep the color 
+  #mosaic with inbuilt mtcars R example
+```
+
+
+#For bagplot we need to load aplpack
+
+```{r}
+library(aplpack)
+bagplot(Cars93$Min.Price, Cars93$Max.Price, cex= 1.20) #cex to make the point size bigger
+```
+
+#showing more complex relationships
+corplot() library(corplot)
+sapply(dataset, is.numeric) 
+#corelation matrices for multiple variables 
+
+```{r}
+library(corrplot)
+col_numeric <- sapply(Boston, is.numeric)
+numericalVars <- Boston[, col_numeric]
+str(numericalVars)
+corrMat <- cor(numericalVars)
+corrplot(corrMat, method = "ellipse")
+```
+
+
+rpart() library(rpart)
+#gives us tree models
+
+```{r}
+library(rpart)
+library(MASS)
+tree_model <- rpart(medv ~ ., data = Boston)
+plot(tree_model)
+text(tree_model, cex = .7) #label easier to read
+```
+
+pch 
+pch = 0,square
+pch = 1,circle
+pch = 2,triangle point up
+pch = 3,plus
+pch = 4,cross
+pch = 5,diamond
+pch = 6,triangle point down
+pch = 7,square cross
+pch = 8,star
+pch = 9,diamond plus
+pch = 10,circle plus
+pch = 11,triangles up and down
+pch = 12,square plus
+pch = 13,circle cross
+pch = 14,square and triangle down
+pch = 15, filled square
+pch = 16, filled circle
+pch = 17, filled triangle point-up
+pch = 18, filled diamond
+pch = 19, solid circle
+pch = 20,bullet (smaller circle)
+pch = 21, filled circle blue
+pch = 22, filled square blue
+pch = 23, filled diamond blue
+pch = 24, filled triangle point-up blue
+pch = 25, filled triangle point down blue
+
+***linear regression model***
+```{r}
+linear_model <- lm(Gas ~ Temp, data = whiteside)
+plot(whiteside$Temp, whiteside$Gas, xlab ="Temperature", ylab="Gas", pch=15,col="blue")
+abline(linear_model, lty = 2)
+```
+#The font "face" (1=plain, 2=bold, 3=italic, 4=bold-italic)
+#srt can be positive or negative numbers. It rotates the labels
+par sets the parameters to the graphs
+
+```{r}
+plot(whiteside$Temp, whiteside$Gas, pch=17)
+indecB <- which(whiteside$Insul == "Before")
+text(x = whiteside$Temp, y = whiteside$Gas,
+     labels = "Before", col = "blue", srt = 30, cex = .8) #srt here is positive. cex .8 will reduce 80% text size from default. 
+#include text in the graph. 
+```
+
+#Adding legend to the plot
+adj moves the text to right or left.
+
+```{r}
+plot(whiteside$Temp, whiteside$Gas,
+     type = "n", 
+     xlab = "Outside temperature",
+     ylab = "Heating gas consumption")
+indexB <- which(whiteside$Insul == "Before")
+indexA <- which(whiteside$Insul == "After")
+points(whiteside$Temp[indexB], whiteside$Gas[indexB], pch = 17) 
+points(whiteside$Temp[indexA],whiteside$Gas[indexA], pch = 1)
+legend("topright", pch = c(17,1), 
+       legend = c("Before", "After")) #legend is used to label the legend
+```
+
+#axis() adds axis to the plot. axis=1 is below, axis=2 is left, axis=3 is top, axis=4 is right.
+if axis is fales, it creates no axis to the plot
+
+```{r}
+boxplot(sugars ~ shelf, data = UScereal, axes = F)
+axis(side = 2)
+axis(side = 1, at = c(1,2,3)) #at add thes axis at specific numerics
+axis(side = 3, at = c(1,2,3),
+     labels = c("floor","middle","top")) #labels the given names at 1,2,3
+```
+
+supsmu() smooth values to the trendline, takes x and y values and incorporates to the graph.
+
+```{r}
+plot(Cars93$Horsepower, Cars93$MPG.city)
+trend1 <- supsmu(Cars93$Horsepower, Cars93$MPG.city)
+lines(trend1)
+trend2 <- supsmu(Cars93$Horsepower, Cars93$MPG.city, bass = 10)
+lines(trend2, lty = 3, lwd = 2) #lwd is line-width #lty 3 is dotted line
+```
+
+***Managing visual complexity***
+matplot() , generates plot with various scatter plots on the same axes.
+matrix on y axis.
+
+```{r}
+matplot(
+  UScereal$calories, 
+  UScereal[,c('protein', 'fat')], 
+  xlab = "calories",
+  ylab = "")
+```
+
+wordcloud()
+wordclouds, displays that present words in varying sizes depending on their frequency. That is, more frequent words appear larger in the display, while rarer words appear in a smaller font.
+wordcloud(words = names(___), 
+          freq = as.numeric(___), 
+          scale =c(max,min)
+
+```{r}
+library(wordcloud)
+model_table <- table(Cars93$Model)
+wordcloud(words = names(model_table), 
+          freq = as.numeric(model_table), 
+          scale = c(0.75,0.25), #tells how the wordcloud appears
+          min.freq = 1)
+```
+
+***multple plot arrays***
+par() sets parameters to the graphs
+
+```{r}
+par(mfrow = c(2,2))
+plot(geyser$duration, main = "Raw data")
+truehist(geyser$duration, main = "Histogram")
+plot(density(geyser$duration), main = "Density")
+```
+
+layout()
+
+```{r}
+layoutMatrix <- matrix(
+  c( 0, 1, 2, 0,0, 3), byrow = T,nrow = 3) #nrow, tells there are 3
+layout(layoutMatrix) #used the matrix constructed 
+layout.show(n = 3) #see layout of all 3 plots
+```
+
+barplot() function has the side effect of creating the plot we want, but it also returns a numerical vector with the center positions of each bar in the plot.
+
+```{r}
+tbl <- table(Cars93$Cylinders)
+mids <- barplot(tbl, horiz = T,
+                col = "transparent",
+                names.arg = "")
+text(20, mids, names(tbl)) #at the horizontal position 20
+text(35, mids, as.numeric(tbl))
+```
+
+symbols() function to display relations between more than two variables
+The symbols() function allows us to extend scatterplots to show the influence of other variables.
+
+```{r}
+symbols(Cars93$Horsepower, Cars93$MPG.city,
+        circles = sqrt(Cars93$Price))
+        symbols(Cars93$Horsepower, Cars93$MPG.city,
+        circles = sqrt(Cars93$Price),
+        inches = 0.1)
+```
+
+```{r}
+# Call png() with the name of the file we want to create
+png('bubbleplot.png')
+# Save our file and return to our interactive session
+dev.off()
+```
+#Using colour to enhance bubble plot
+
+
+
+```{r}
+IScolors <- c("red", "green", "yellow", "blue",
+              "black", "white", "pink", "cyan",
+              "gray", "orange", "brown", "purple")
+cylinderLevel <- as.numeric(Cars93$Cylinders)
+symbols(
+  Cars93$Horsepower, Cars93$MPG.city, 
+  circles = as.numeric(Cars93$Cylinders), 
+  inches = 0.2, #size of bubbles
+  bg = IScolors[cylinderLevel]) #bg is color of each bubble
+```
+
+Thetableplot() function constructs a set of side-by-side horizontal barplots, one for each variable
+
+```{r}
+library(insuranceData)
+data(dataCar)
+suppressPackageStartupMessages(library(tabplot))
+tableplot(dataCar)
+```
+lattice xyplot()
+lattice is a general-purpose graphics package that provides alternative implementations of many of the plotting functions available in base graphics. Specific examples include scatterplots with the xyplot() function, bar charts with the barchart() function, and boxplots with the bwplot() function.
+
+```{r}
+library(lattice)
+calories_vs_sugars_by_shelf <- calories ~ sugars | shelf
+xyplot(calories_vs_sugars_by_shelf, data = UScereal)
+```
+
+ggplot2()
+
+```{r}
+# Load the ggplot2 package
+library(ggplot2)
+
+# Create the basic plot (not displayed): basePlot
+basePlot <- ggplot(Cars93, aes(x = Horsepower, y = MPG.city))
+
+# Display the basic scatterplot
+basePlot + 
+  geom_point()
+
+# Color the points by Cylinders value
+# Color the points by Cylinders value
+basePlot + 
+  geom_point(colour = IScolors[Cars93$Cylinders])
+
+# Make the point sizes also vary with Cylinders value
+basePlot + 
+  geom_point(colour = IScolors[Cars93$Cylinders], 
+             size = as.numeric(Cars93$Cylinders))
+```
+
+
+I want to try what I have learnt on my own data. Introduction to my data.
+
+There are three populations (described more completely in the "material and methods section")   
+1) C:  "uncontrolled mating" (control)   
+2) (O)M: "older male mated with younger female"   
+3) (O)F: "older female mated with younger male"   
+![Experimental Design](experimental_design.jpeg)
+
+Pair "(3-23 d) fertility" was measured by mating a 20 day old Control virgin male with a 3 day old (O)M virgin female and recording eggs per day from 3 - 23 d.
+
+```{r}
+egg_data <- read.csv("CE_egg_transposed.csv",header=TRUE)
+str(egg_data) # for structure of egg_data
+```
+
+```{r}
+colnames(egg_data) # column names 
+```
+
+```{r}
+print(head(egg_data,n=10L)) # first 6 examples (rows) (by default)  
+
+```
+
+```{r}
+keep <- seq(from=2, to=40, by=2)
+egg_data <- egg_data[keep,]
+```
+
+```{r}
+print(head(egg_data,n=10L)) # first 6 examples (rows) (by default)  
+
+```
+
+#I actually tried learning about matplot, and what I can do to neaten up the grap is add type='l'. We can customize our mat plot graphs. type=l will give us the line graph instead of alphabets. 
+
+#One more thing I have learnt is labelling x and y axis. xlab and ylab is what we use to label the x and y axis is matplot.
+
+#We can also, add title to the graph, main does that
+
+```{r}
+# plot(egg_data$Days_of_egg_laying,egg_data$X1M_1)
+# plot(egg_data$Days_of_egg_laying,egg_data$X1M_2)
+y <- egg_data[2:51]
+#print(y)
+matplot(egg_data$Days_of_egg_laying,y, type='l', xlab = 'Days of egg laying', ylab = 'Number of eggs laid', main = 'Overall eggs laying in Control and Experimental')
+# matplot used because y is a matrix
+```
+
+#Now I have the line matplot but I am still learning to customize it more properly. I have class on plots next week on November 19th, so I hope to learn there. Now I am gonna change everything in to line graphs and add titles 
+
+Here X1M
+```{r}
+y <- y <- egg_data[2:11]
+# print(y)
+matplot(egg_data$Days_of_egg_laying,y, type='l', xlab = 'Days of egg laying', ylab = 'Number of eggs laid', main = 'X1M egg laying')
+```
+
+Here X2M
+```{r}
+y <- egg_data[12:21]
+# print(y)
+matplot(egg_data$Days_of_egg_laying,y, type='l', xlab = 'Days of egg laying', ylab = 'Number of eggs laid', main = 'X2M egg laying')
+```
+
+Here X3M
+```{r}
+y <- egg_data[22:31]
+# print(y)
+matplot(egg_data$Days_of_egg_laying,y, type='l', xlab = 'Days of egg laying', ylab = 'Number of eggs laid', main = 'X3M egg laying')
+```
+
+Here C
+```{r}
+y <- egg_data[32:51]
+# print(y)
+matplot(egg_data$Days_of_egg_laying,y, type='l', xlab = 'Days of egg laying', ylab = 'Number of eggs laid', main = 'Control egg laying')
+```
+
+*** Total eggs laid ***   
+One measure of the female's fecundity is the total number of eggs laid, obtained from the number of eggs per day summed from day 1 to 20 (female age 3 to 23 days post-eclosion).
+This I obtained using numbers (excel) and coverted to a .cvs file, loaded here.
+
+```{r}
+total_egg_data <- read.csv("total_eggs.csv",header=TRUE)
+#print(str(total_egg_data))
+#print("column names")
+#print(names(total_egg_data))
+print(head(total_egg_data,n=20L))
+```
+The columns are the four different "experiments", !M, 2M, 3M, C
+The rows are the different females (observations of female fecundity as measured by total eggs laid). There are 10 observations for 1M, 2M, 3M and 20 for C.
+
+Next do a boxplot of this data
+```{r}
+boxplot(total_egg_data)
+```
+The "Female" column is ignored (just female number). The other boxplots show 4 outliers. These are the 4 females that died before the full 20 days. 
+
+I removed the egg totals for these females and made a new file, "total_revised_egg_data,cvs", loaded here
+
+```{r}
+total_egg_revised_data <- read.csv("total_eggs_revised.csv",header=TRUE)
+#print(str(total_egg_revised_data))
+#print("column names")
+#print(names(total_egg_revised_data))
+print(head(total_egg_revised_data,n=18L))
+```
+Next do a boxplot of this data
+```{r}
+boxplot(total_egg_revised_data)
+```
+Now the data looks resonable for analysis of variance.
+
+Its just a little what I have applied to my own data because of short of time. But its a good thing to practice. Thank you.
